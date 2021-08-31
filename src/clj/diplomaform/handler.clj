@@ -2,8 +2,10 @@
   (:require
    [reitit.ring :as reitit-ring]
    [diplomaform.middleware :refer [middleware]]  
+   [ring.util.anti-forgery :refer [anti-forgery-field]]
    [clojure.data.json :as json]
    [hiccup.page :refer [include-js include-css html5]]
+   [ring.util.anti-forgery :refer [anti-forgery-field]]
    [config.core :refer [env]]))
 
 
@@ -23,6 +25,7 @@
 (defn loading-page []
   (html5
    (head)
+   (anti-forgery-field)
    [:body {:class "body-container"}
     mount-target
     (include-js "/js/app.js")
@@ -94,7 +97,7 @@
     [["/" {:get {:handler index-handler}}]
      ["/stats" {:get {:handler index-handler}}]
      ["/qa" {:get {:handler json-handler}}]
-     ["/res" {:get {:handler handler-res}}]
+     ["/res" {:get {:handler (json/write-str @answers)}}]
      ["/answers" {:post {:handler update-results}}]
      ]
     )
